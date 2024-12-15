@@ -53,3 +53,5 @@ target_link_libraries(SkyRender PRIVATE Microsoft.GSL::GSL)
 target_include_directories(SkyRender PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 target_compile_features(SkyRender PRIVATE cxx_std_20)
+
+target_precompile_headers(SkyRender PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/precomp.h")
