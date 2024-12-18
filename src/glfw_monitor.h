@@ -1,4 +1,5 @@
 #pragma once
+#include <precomp.h>
 
 struct GLFWmonitor;
 struct GLFWwindow;
