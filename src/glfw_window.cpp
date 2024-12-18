@@ -26,12 +26,12 @@ namespace sreng {
   }
 
   bool Window::ShouldClose() const {
-    return glfwWindowShouldClose(window_)
+    return glfwWindowShouldClose(window_);
   }
 
   GLFWwindow* Window::GetHandle() const {
 
-    return window_
+    return window_;
   }
 
   bool Window::TryMoveToMonitors(std::uint16_t monitor_number) {
