@@ -21,6 +21,8 @@ file(GLOB_RECURSE SkyRenderSources CONFIGURE_DEPENDS
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
 
+add_executable(SkyRender ${SkyRenderSources})
+
 #GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan application development. 
 #It provides a simple, platform-independent API for creating windows, 
 #contexts and surfaces, reading input, handling events, etc.
@@ -43,8 +45,6 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(microsoft-gsl)
 
-#add_executable(SkyRender ${SkyRenderSources} "src/graphics.h" "src/graphics.cpp" "src/utilities.cpp")
-
 target_link_libraries(SkyRender PRIVATE Vulkan::Vulkan)
 target_link_libraries(SkyRender PRIVATE glm)
 target_link_libraries(SkyRender PRIVATE glfw)
@@ -55,3 +55,4 @@ target_include_directories(SkyRender PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_features(SkyRender PRIVATE cxx_std_20)
 
 target_precompile_headers(SkyRender PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/precomp.h")
+
