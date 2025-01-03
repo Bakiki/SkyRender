@@ -1,6 +1,8 @@
 #include <precomp.h>
 #include <graphics.h>
+#include <vector>
 #include <GLFW/glfw3.h>
+
 
 namespace sreng {
   Graphics::Graphics(gsl::not_null<Window*> window) : window_(window) {
@@ -12,7 +14,7 @@ namespace sreng {
     {
       vkDestroyInstance(instance_, nullptr);
     }
-    
+ 
   }
 
   void Graphics::InitializeVulkan() {
@@ -20,9 +22,11 @@ namespace sreng {
   }
 
   void Graphics::CreateInstance() {
-
-
-    gsl::span<gsl::czstring> suggested_extensions = GetSuggestedExtensions();
+    gsl::span<gsl::czstring> suggested_extensions = GetSuggestedInstanceExtensions();
+    if (!AreAllExtensionsSupported(suggested_extensions)) {
+      std::exit(EXIT_FAILURE);
+    }
+    
     /*typedef struct VkApplicationInfo {
       VkStructureType    sType;
       const void* pNext;
@@ -51,18 +55,45 @@ namespace sreng {
     instance_creation_info.enabledLayerCount = 0;
 
     VkResult result = vkCreateInstance(&instance_creation_info, nullptr, &instance_);
-
     if (result != VK_SUCCESS) {
 
       std::exit(EXIT_FAILURE);
     }
   }
 
-  gsl::span<gsl::czstring> Graphics::GetSuggestedExtensions() {
+  gsl::span<gsl::czstring> Graphics::GetSuggestedInstanceExtensions() {
     std::uint32_t glfw_extension_count = 0;
     gsl::czstring* glfw_extensions;
 
     glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
     return{glfw_extensions, glfw_extension_count};
+  }
+
+  std::vector<VkExtensionProperties> Graphics::GetSupportedInstanceExtensions() {
+    std::uint32_t count;
+    vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr);
+    if (count == 0) {
+      return{};
+    }
+    std::vector<VkExtensionProperties> properties(count);
+    vkEnumerateInstanceExtensionProperties(nullptr, &count, properties.data());
+    return properties;
+  }
+
+  bool Graphics::ExtensionMatchesName(gsl::czstring name, const VkExtensionProperties& properties){
+    return sreng::streq(properties.extensionName, name);
+  }
+
+  bool Graphics::IsExtensionSupported(gsl::span<VkExtensionProperties> extensions,gsl::czstring name){
+    return std::any_of(
+      extensions.begin(), extensions.end(),std::bind_front(ExtensionMatchesName, name));
+  }
+
+  bool Graphics::AreAllExtensionsSupported(gsl::span<gsl::czstring> extrensions) {
+    std::vector<VkExtensionProperties> supported_extensions = GetSupportedInstanceExtensions();
+
+    return std::all_of(
+      extrensions.begin(), extrensions.end(),
+      std::bind_front(IsExtensionSupported,supported_extensions));
   }
 }

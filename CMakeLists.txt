@@ -43,7 +43,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(microsoft-gsl)
 
-add_executable(SkyRender ${SkyRenderSources} "src/graphics.h" "src/graphics.cpp")
+#add_executable(SkyRender ${SkyRenderSources} "src/graphics.h" "src/graphics.cpp" "src/utilities.cpp")
 
 target_link_libraries(SkyRender PRIVATE Vulkan::Vulkan)
 target_link_libraries(SkyRender PRIVATE glm)
